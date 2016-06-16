@@ -1,0 +1,25 @@
+# Exclude python pickles
+*.pkl
+
+# Exclude PNG images
+*.png
+
+# text files with data 
+*.csv
+*.json
+
+# compiled and modified objects
+*.pyc
+*.py-e
+
+# log text files:
+*.log
+
+# sublime workspace
+*.sublime-workspace
+
+# svn stuff
+*.svn*
+
+# jupyter checkpoints
+.ipynb_checkpoints/
