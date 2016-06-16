@@ -1,4 +1,6 @@
 
+### (sorry for the latex math, to view this intro correctly you need to download the .ipynb file)
+
 # PrettyScaler
 
 ### This python module uses input data to create a condensed isomorphic transformation $\mathcal{T}: \mathbf{R} \rightarrow \left(-1,1 \right) $
