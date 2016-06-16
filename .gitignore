@@ -2,7 +2,7 @@
 *.pkl
 
 # Exclude PNG images
-*.png
+#*.png
 
 # text files with data 
 *.csv
@@ -16,7 +16,8 @@
 *.log
 
 # sublime workspace
-*.sublime-workspace
+*.sublime-*
+
 
 # svn stuff
 *.svn*
