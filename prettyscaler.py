@@ -5,7 +5,6 @@ from scipy import interpolate
 
 
 
-
 class PrettyScaler:
 
 	''' 
@@ -96,6 +95,7 @@ class PrettyScaler:
 	def build_params(self):
 		''' Adds parameter objects to class dictionary '''
 		self.all_params = {'trunk_x':list(self.trunk_x),'trunk_y':list(self.trunk_y),
+		'y_scaled':list(self.y_scaled),
 		'wing_offset_right':self.wing_offset_right,'wing_coeff_right':self.wing_coeff_right,
 		'wing_offset_left':self.wing_offset_left,'wing_coeff_left':self.wing_coeff_left,
 		'rightwing_boundary_value':self.rightwing_boundary_value,
@@ -191,9 +191,9 @@ class PrettyScaler:
 		# This would be CDF[x]:
 		self.bulge_auxfunc = lambda x: x + np.sin(x*np.pi)/(np.pi)
 		# Map onto array from flat [-1,1] distro
-		self.bulge_y = np.array([self.bulge_auxfunc(u) for u in self.y_scaled])
+		self.bulge_y = np.array([self.bulge_auxfunc(u) for u in self.all_params['y_scaled']])
 		# Build interpolation object
-		self.bulge_intp = interpolate.interp1d(self.bulge_y, self.y_scaled,kind='linear', \
+		self.bulge_intp = interpolate.interp1d(self.bulge_y, self.all_params['y_scaled'],kind='linear', \
 			bounds_error=False, fill_value=0.0)
 
 
@@ -246,9 +246,6 @@ class PrettyScaler:
 		except:
 			raise ValueError('Data values could not be converted to numerical 1-D array.')
 		#
-		# make sure that you have at least a few data points:
-		if len(data)<20:
-			raise RuntimeError('Data set is too small.')
 
 		return 1.0*data
 
@@ -325,6 +322,7 @@ class PrettyScaler:
 	@staticmethod
 	def generalized_exponential(x,coeff,offset):
 		return np.exp(-(x-offset)*coeff)
+
 
 
 
