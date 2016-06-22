@@ -3,7 +3,7 @@
 
 # PrettyScaler
 
-### This python module uses input data to create a condensed isomorphic (http://mathurl.com/5q4mnx) transformation $\mathcal{T}: \mathbf{R} \rightarrow \left(-1,1 \right) $
+### This python module uses input data to create a condensed isomorphic ![alt text](http://mathurl.com/5q4mnx) transformation $\mathcal{T}: \mathbf{R} \rightarrow \left(-1,1 \right) $
 
 Do you usually use sklearn.preprocessing.StandardScaler to normalize your data? Sometimes, the distribution of the data can be so assymetric and heterogeneous that a better transformation is necessary. PrettyScaler acts in the same way as StandardScaler; fits a mapping from raw to normalized distributions. However, PrettyScaler will neatly condense the metric, squeezing all reals into the bound domain (-1,1) and producing a uniform density distribution.
 
