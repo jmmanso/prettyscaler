@@ -30,7 +30,8 @@ When to use PrettyScaler:
 import matplotlib.pyplot as plt;
 %matplotlib inline
 import numpy as np;
-from prettyscaler import prettyscaler;
+import prettyscaler;
+from sklearn.preprocessing import StandardScaler;
 ```
 
 
@@ -42,28 +43,28 @@ def create_lognormal_truncated_sample(logmu,logsig,N,sign):
     random_sample = random_sample[sign*random_sample>sign*logmu]
     return 10**random_sample
 
-random_sample1 = create_lognormal_truncated_sample(1,1,5000,1)
+random_sample1 = create_lognormal_truncated_sample(1,1,5000,-1)
 random_sample2 = create_lognormal_truncated_sample(5,.3,5000,1)
 random_sample3 = create_lognormal_truncated_sample(8,.25,5000,-1)
-random_sample = np.r_[random_sample1,random_sample2, random_sample3]
+# Assemble the full data set:
+my_data = np.r_[random_sample1,random_sample2, random_sample3]
 ```
 
 
 ```python
 # Take a look at the monster we've created in a log plot
-plt.hist(np.log10(random_sample[random_sample>0]),bins=50);
+plt.hist(np.log10(my_data[my_data>0]),bins=50);
 ```
 
 
-![png](images/output_4_0.png)
+![png](output_4_0.png)
 
 
 
 ```python
 # Break the random sample into train and test sets:
-np.random.shuffle(random_sample)
-test_data, train_data = random_sample[random_sample>np.median(random_sample)],\
-    random_sample[random_sample<np.median(random_sample)]
+np.random.shuffle(my_data)
+test_data, train_data = my_data[::2], my_data[1::2]
 ```
 
 
@@ -100,6 +101,86 @@ pts.save_pickle('fitted_params.pkl')
 # pts.load_pickle('fitted_params.pkl')
 ```
 
+### PrettyScaler fits a mapping function. Here is what that function looks like.
+
+
+```python
+# Let us plot the input vs output spaces of the function. 
+# We will highlight the different regions (wings and trunk)
+# separately, and examine how well they blend together.
+#
+# First, gotta create an x-grid for the inputs. For
+# better clarity, we'll make it logarithmically spaced:
+right_wing_x = 10**np.linspace(np.log10(pts.all_params['rightwing_boundary_value']),np.log10(1e9),100)
+left_wing_x = 10**np.linspace(np.log10(1e-4),np.log10(pts.all_params['leftwing_boundary_value']),100)
+# This one we can fetch directly from the instance:
+trunk_x = pts.all_params['trunk_x']
+
+# Now, compute the outputs
+right_wing_y = np.array([pts.transfer_function(u) for u in right_wing_x])
+left_wing_y = np.array([pts.transfer_function(u) for u in left_wing_x])
+trunk_y = np.array([pts.transfer_function(u) for u in trunk_x])
+
+# Plot the whole thing. The wings are shown in red. 
+# As mentioned earlier, the trunk (blue part) represents
+# an interpolation to the cumulative function of the data. 
+# The wings are not a direct fit to the data; they are 
+# asymptotically declining functions that match the value
+# and gradient of the trunk at the boundaries.
+plt.plot(left_wing_x, left_wing_y, color='r')
+plt.plot(right_wing_x, right_wing_y, color='r')
+plt.plot(trunk_x, trunk_y, color='b')
+plt.ylim(-1.1,1.1)
+plt.xscale('log')
+plt.yscale('linear')
+```
+
+
+![png](output_8_0.png)
+
+
+
+```python
+# Zoom into the left wing blend, it's pretty smooth:
+plt.plot(left_wing_x, left_wing_y, color='r')
+plt.plot(trunk_x, trunk_y, color='b')
+plt.xlim(1e-3,5e-1)
+plt.ylim(-1,-0.9)
+plt.xscale('log')
+```
+
+
+![png](output_9_0.png)
+
+
+
+```python
+# Zoom into the right wing. Also smooth blend.
+plt.plot(right_wing_x, right_wing_y, color='r')
+plt.plot(trunk_x, trunk_y, color='b')
+plt.xlim(9e7,1.1e8)
+plt.ylim(0.95,1)
+plt.xscale('linear')
+```
+
+
+![png](output_10_0.png)
+
+
+
+```python
+# In addition, the gradient should be positive everywhere. 
+# Assemble full output grid:
+test_ygrid = np.r_[left_wing_y, trunk_y, right_wing_y]
+
+# Check that there is no negative gradient:
+assert(min(np.gradient(test_ygrid))>=0)
+
+# In the trunk specifically, check that the
+# gradient is larger than zero everywhere:
+assert(min(np.gradient(trunk_y))>0)
+```
+
 
 ```python
 # Transform the test data into a flat and bulge spaces:
@@ -117,7 +198,7 @@ plt.hist(test_data_flat, bins=20);
 ```
 
 
-![png](images/output_8_0.png)
+![png](output_13_0.png)
 
 
 
@@ -127,12 +208,5 @@ plt.hist(test_data_bulge, bins=20);
 ```
 
 
-![png](images/output_9_0.png)
+![png](output_14_0.png)
 
-
-### NOTE
-In the bulge representation plot, gaps might appear toward the edges. This is because the test data used in that plot is finite, but the regions close to -1 and 1 are "reserved" for mappings from the $(-\infty,+\infty)$ original domain.
-
-## Issues
-
-If you have strong outliers in the data, those might be mapped so close to the boundary limits (like 0.9999...) that python will numerically round them up. In these regions, the non-flat gradient requirement of the transformation is broken. You might end up with a transformed data set with more than one value being equal to 1. This is probably not an issue, since such values are outliers anyway, but it is important to keep in mind.

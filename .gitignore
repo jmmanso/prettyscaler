@@ -1,6 +1,9 @@
 # Exclude python pickles
 *.pkl
 
+# DS store crap
+*DS_store*
+
 # Exclude PNG images
 #*.png
 
