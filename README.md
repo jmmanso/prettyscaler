@@ -1,23 +1,20 @@
-
-### (sorry for the latex math, to view this intro correctly you need to download the .ipynb file)
-
 # PrettyScaler
 
-### This python module uses input data to create a condensed isomorphic transformation $\mathcal{T}: \mathbf{R} \rightarrow \left(-1,1 \right) $
+### This python module uses input data to create a condensed isomorphic transformation ![alt text](http://mathurl.com/hdprl5n.png)
 
-Do you ![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1") usually ![alt text](http://mathurl.com/5q4mnx.png "whatevs") use sklearn.preprocessing.StandardScaler to normalize your data? Sometimes, the distribution of the data can be so assymetric and heterogeneous that a better transformation is necessary. PrettyScaler acts in the same way as StandardScaler; fits a mapping from raw to normalized distributions. However, PrettyScaler will neatly condense the metric, squeezing all reals into the bound domain (-1,1) and producing a uniform density distribution.
+Do you usually use sklearn.preprocessing.StandardScaler to normalize your data? Sometimes, the distribution of the data can be so assymetric and heterogeneous that a better transformation is necessary. PrettyScaler acts in the same way as StandardScaler; fits a mapping from raw to normalized distributions. However, PrettyScaler will neatly condense the metric, squeezing all reals into the bound domain (-1,1) and producing a uniform density distribution.
 
-Basically, it will map each $x \in \mathbf{R}$ to the cumulative function of the data. Since the training data is finite, PrettyScaler will add some wings to that cumulative function so that it is defined in the entire domain. 
+Basically, it will map each ![alt text](http://mathurl.com/go6xs4l.png) to the cumulative function of the data. Since the training data is finite, PrettyScaler will add some wings to that cumulative function so that it is defined in the entire domain. 
 The wing boundaries are defined by the wing_percentile argument, which represents the p-value enclosed by each of the 2 wings. These wings are exponential functions, and are glued to the main body by enforcing that the function value and gradient match and the boundary. Thus, this **makes the extrema of the data to be tucked into (-1,1), in an asymptotic fashion**.
 
 The result of this transformation is a uniform distribution, but PrettyScaler can also output one that generates a bulge-like distribution. Depending on the "kind" argument in the fit() method, the probability density distributions will be:
-* $\mathcal{P}_\mathrm{flat}(x)=1$
-* $\mathcal{P}_\mathrm{bulge}(x)=1-\cos{\pi (x+1)}$
+* ![alt text](http://mathurl.com/zv7az78.png)
+* ![alt text](http://mathurl.com/jhu6gqh.png)
 
 The mapping constructed by PrettyScaler meets the following requirements:
-* $\mathcal{T}: \mathbf{R} \rightarrow \left(-1,1 \right) $
-* $\mathcal{T}(x)\propto x$, monotonically increasing
-* $\partial_x \mathcal{T}(x)$ is non-zero, finite and positive everywhere
+* ![alt text](http://mathurl.com/zk3ck4m.png)
+* ![alt text](http://mathurl.com/zlurmyc.png), monotonically increasing
+* ![alt text](http://mathurl.com/hvdh7lp.png) is non-zero, finite and positive everywhere
 
 When to use PrettyScaler:
 * The main use case is to preprocess data for neural nets and SVMs
