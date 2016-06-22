@@ -57,7 +57,7 @@ plt.hist(np.log10(my_data[my_data>0]),bins=50);
 ```
 
 
-![png](output_4_0.png)
+![png](images/output_4_0.png)
 
 
 
@@ -136,7 +136,7 @@ plt.yscale('linear')
 ```
 
 
-![png](output_8_0.png)
+![png](images/output_8_0.png)
 
 
 
@@ -150,7 +150,7 @@ plt.xscale('log')
 ```
 
 
-![png](output_9_0.png)
+![png](images/output_9_0.png)
 
 
 
@@ -164,7 +164,7 @@ plt.xscale('linear')
 ```
 
 
-![png](output_10_0.png)
+![png](images/output_10_0.png)
 
 
 
@@ -198,7 +198,7 @@ plt.hist(test_data_flat, bins=20);
 ```
 
 
-![png](output_13_0.png)
+![png](images/output_13_0.png)
 
 
 
@@ -208,5 +208,5 @@ plt.hist(test_data_bulge, bins=20);
 ```
 
 
-![png](output_14_0.png)
+![png](images/output_14_0.png)
 
